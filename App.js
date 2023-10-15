@@ -1,11 +1,10 @@
 import * as React from 'react';
+import { StyleSheet, Text, View, Image, ScrollView, ImageComponent } from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
 import {createDrawerNavigator} from '@react-navigation/drawer';
 import 'react-native-gesture-handler';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, Image, ScrollView, ImageComponent } from 'react-native';
-//import Test from './components/test';
 import HomeScreen from './screens/HomeScreen';
 import ProfileScreen from './screens/ProfileScreen';
 import CalculatorScreen from './screens/CalculatorScreen';
