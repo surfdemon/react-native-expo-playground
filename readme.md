@@ -8,6 +8,10 @@ Ideas for app
 
 [*] Setup testing so that I can learn testing in react native and setup tests
 
+[*] Setup test coverage report
+
+[] Setup tests for calculator screen 
+
 [] Work out logger - To let you log your work out and view your previous workouts 
 
 [] Intermittent Fasting Tracker - To let you track when you last had something to eat and how long has passed. Also 

@@ -1,7 +1,8 @@
 {
   "plugins": [
     // ...
-    "react-hooks"
+    "react-hooks",
+    "jest"
   ],
   "rules": {
     // ...
