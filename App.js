@@ -28,23 +28,6 @@ const App = () => {
 }
 
 export default App;
-/*
-export default function App() {
-  return (
-    <ScrollView>
-      <View style={styles.container}>
-      <Text>Hello</Text>
-        <StatusBar style="auto" />
-        <Image 
-          source={ require('./assets/favicon.png') }
-          style={ styles.image }
-        />
-        <Test />
-      </View>
-    </ScrollView>
-  );
-}
-*/
 
 const styles = StyleSheet.create({
   container: {

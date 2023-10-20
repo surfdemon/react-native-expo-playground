@@ -1,151 +1,104 @@
 import React, {useState} from 'react';
-import {StyleSheet, ScrollView, View, Text, Button, TouchableOpacity} from 'react-native';
+import {StyleSheet, ScrollView, View, Text, TouchableOpacity} from 'react-native';
+import CalculatorButton from '../components/CalculatorButton';
 
 const CalculatorScreen = ({navigation}) => { 
     //Setup useStates.
-    const [sum, setSum] = useState('0');
+    const [calculatorState, setCalculatorState] = useState({
+        currentValue: '0', 
+        operatorSymbol: null,
+        previousValue: null,
+    });
     React.useEffect(() => {    
     });
-    const [fullSum, setFullSum] = useState('');
-    React.useEffect(() => {
-    });
-    const [lastButton, setLastButton] = useState('');
-    React.useEffect(() => {
-    });
-    const [firstNum, setFirstNum] = useState('');
-    React.useEffect(() => {
-    });
-    const [secondNum, setSecondNum] = useState('');
-    React.useEffect(() => {
-    });
-    const [operatorSymbol, setOperatorSymbol] = useState('');
-    React.useEffect(() => {
-    });
-    const [fullSumView, setFullSumView] = useState(false);
-    React.useEffect(() => {
-    });
 
-    // Function to toggle short sum / long sum is shown on screen.
-    // const toggleView = () => {
-    //     setFullSumView(!fullSumView);
-    // }
-
-    
-
-    // Function to work out the sum when = button is pressed.
-    const workoutSum = () => {
-        // Need to split up the string in fullSum, get the numbers from either side 
-        // of the operator symbol and the operator itself and then workout the answer. 
+    const operatorPress = (sym) => {
+        const { currentValue, previousValue, operatorSymbol } = calculatorState;
+        setCalculatorState({ previousValue: currentValue, currentValue: '0', operatorSymbol: sym });
     }
-
-    const symbolPress = (sym) => {
-        setOperatorSymbol(sym);
-    }
-
-    // const toggleSumView = () => {
-    //     //Toggle sum view 
-    //     toggleView(); 
-    //     alert(`Showing full sum ${fullSumView}`);
-    // }
 
     const calculatePress = () => {
-        let newSum;
+        const { currentValue, previousValue, operatorSymbol } = calculatorState;
+        let newValue; 
         if (operatorSymbol === '+'){
-            newSum = parseInt(firstNum) + parseInt(secondNum);
+            newValue = `${parseFloat(previousValue) + parseFloat(currentValue)}`.toString();
+            setCalculatorState({ currentValue: newValue, operatorSymbol: null, previousValue: null});
         } else if (operatorSymbol === '-'){
-            newSum = parseInt(firstNum) - parseInt(secondNum);
+            newValue = `${previousValue - currentValue}`;
+            setCalculatorState({ currentValue: newValue, operatorSymbol: null, previousValue: null});
         } else if (operatorSymbol === '/'){
-            newSum = parseInt(firstNum) / parseInt(secondNum);
+            newValue = `${previousValue / currentValue}`;
+            setCalculatorState({ currentValue: newValue, operatorSymbol: null, previousValue: null});
         } else if (operatorSymbol === '*'){
-            newSum = parseInt(firstNum) * parseInt(secondNum);
-        } 
-        //set first num to be second num to be the first num
-        setFirstNum(newSum);
-        setSecondNum('');
-        setSum(newSum);
+            newValue = `${previousValue * currentValue}`;
+            setCalculatorState({ currentValue: newValue, operatorSymbol: null, previousValue: null});
+        }
     }
 
     const clearSums = () => {
-        setSum('0');
-        setOperatorSymbol('');
-        setFirstNum('');
-        setSecondNum('');
-        setLastButton('C');
+       setCalculatorState({ currentValue: '0', operatorSymbol: null, previousValue: null});
     }
 
-    const pointPress = () => {
-        setSum(sum + num);
-        setOperatorSymbol('.');
+    const pointPress = (num) => {
+        const { currentValue, previousValue, operatorSymbol } = calculatorState;
+        setCalculatorState({ currentValue : currentValue + num, previousValue: previousValue, operatorSymbol: operatorSymbol});
     }
 
     const numPress = (num) => {
-        //Function for when a number is pressed 
+        const { currentValue, previousValue, operatorSymbol } = calculatorState;
 
-        //Get current values and save in new temp variables
-        let tempSum = sum;
-        let tempFirstNum = firstNum;
-        let tempSecondNum = secondNum;
-
-
-        //Check if the current sum is 0, if so it should be
-        //if (tempSum === '0' && lastButton === ''){
-        //    tempSum = '0';
-        //}
-
-        //Check to see if an operatorSymbol has been pressed or not, if it has then update second num and update 
-        //the current sum with the second num. Otherwise must still be using the first num
-        if (operatorSymbol !== '' && operatorSymbol !== undefined){
-            tempSecondNum = secondNum + num; 
-            tempSum = tempSecondNum; 
-        } else { 
-            tempFirstNum = firstNum + num;
-            tempSum = tempFirstNum;
+        if (num === '.' && !currentValue.includes('.')) {
+            //if num === . and currentValue does not include a . then add it to the end.
+            return setCalculatorState({ currentValue: currentValue + num, previousValue: previousValue, operatorSymbol: operatorSymbol});
+        } else if ( num !== '.') {
+            //if num is not a . carry on 
+            if (currentValue === '0'){
+                //if currentValue is a 0 then replace it with new num
+                setCalculatorState({  currentValue: num, previousValue: previousValue, operatorSymbol: operatorSymbol  });   
+            } else {
+                // if currentValue is not 0 then add new num to the end of currentValue
+                setCalculatorState({ currentValue: currentValue + num, previousValue: previousValue, operatorSymbol: operatorSymbol});
+            }
         }
-        setSum(tempSum);
-        setFirstNum(tempFirstNum);
-        setSecondNum(tempSecondNum);
     }
 
     return (
         <View style={[styles.mainRow]}>
             <View style={[styles.container]}>
                 <View style={[styles.sumArea]}>
-                    <Text id='sum' style={[styles.text, styles.sum]}>{sum}</Text>
+                    <Text id='sum' testID='sum' style={[styles.text, styles.sum]}>{calculatorState.currentValue}</Text>
                 </View>
                 <View style={[styles.row]}>
-                    <TouchableOpacity style={[styles.button, styles.tripleWidthButton]} onPress={() => clearSums('C')}><Text style={[styles.text]}>C</Text></TouchableOpacity>
-                    
-                   
-                    <TouchableOpacity style={[styles.button]} onPress={() => symbolPress('*')}><Text style={[styles.text]}>*</Text></TouchableOpacity>
+                    <CalculatorButton title="C" onPress={() => clearSums('C')} isTripleWidthButton testID='C' />
+                    <CalculatorButton title="*" onPress={() => operatorPress('*')} symbol={calculatorState.operatorSymbol} isTripleWidthButton testID='*' />
                 </View>    
                 <View style={[styles.row]}>
-                    <TouchableOpacity style={[styles.button]} onPress={() => numPress('1')}><Text style={[styles.text]}>1</Text></TouchableOpacity>
-                    <TouchableOpacity style={[styles.button]} onPress={() => numPress('2')}><Text style={[styles.text]}>2</Text></TouchableOpacity>
-                    <TouchableOpacity style={[styles.button]} onPress={() => numPress('3')}><Text style={[styles.text]}>3</Text></TouchableOpacity>
-                    <TouchableOpacity style={[styles.button]} onPress={() => symbolPress('+')}><Text style={[styles.text]}>+</Text></TouchableOpacity>
+                    <CalculatorButton title="1" onPress={() => numPress('1')} testID='1' />
+                    <CalculatorButton title="2" onPress={() => numPress('2')} testID='2' />
+                    <CalculatorButton title="3" onPress={() => numPress('3')} testID='3' />
+                    <CalculatorButton title="+" onPress={() => operatorPress('+')} symbol={calculatorState.operatorSymbol} testID='+' />
                 </View>    
                 <View style={[styles.row]}>
-                    <TouchableOpacity style={[styles.button]} onPress={() => numPress('4')}><Text style={[styles.text]}>4</Text></TouchableOpacity>
-                    <TouchableOpacity style={[styles.button]} onPress={() => numPress('5')}><Text style={[styles.text]}>5</Text></TouchableOpacity>
-                    <TouchableOpacity style={[styles.button]} onPress={() => numPress('6')}><Text style={[styles.text]}>6</Text></TouchableOpacity>
-                    <TouchableOpacity style={[styles.button]} onPress={() => symbolPress('-')}><Text style={[styles.text]}>-</Text></TouchableOpacity>
+                    <CalculatorButton title="4" onPress={() => numPress('4')} testID='4' />
+                    <CalculatorButton title="5" onPress={() => numPress('5')} testID='5' />
+                    <CalculatorButton title="6" onPress={() => numPress('6')} testID='6' />
+                    <CalculatorButton title="-" onPress={() => operatorPress('-')} symbol={calculatorState.operatorSymbol} testID='-' />
                 </View>
                 <View style={[styles.row]}>
-                    <TouchableOpacity style={[styles.button]} onPress={() => numPress('7')}><Text style={[styles.text]}>7</Text></TouchableOpacity>
-                    <TouchableOpacity style={[styles.button]} onPress={() => numPress('8')}><Text style={[styles.text]}>8</Text></TouchableOpacity>
-                    <TouchableOpacity style={[styles.button]} onPress={() => numPress('9')}><Text style={[styles.text]}>9</Text></TouchableOpacity>
-                    <TouchableOpacity style={[styles.button]} onPress={() => symbolPress('/')}><Text style={[styles.text]}>/</Text></TouchableOpacity>
+                    <CalculatorButton title="7" onPress={() => numPress('7')} testID='7' />
+                    <CalculatorButton title="8" onPress={() => numPress('8')} testID='8' />
+                    <CalculatorButton title="9" onPress={() => numPress('9')} testID='9' />
+                    <CalculatorButton title="/" onPress={() => operatorPress('/')} symbol={calculatorState.operatorSymbol} testID='/' />
                 </View> 
                 <View style={[styles.row]}>
-                    <TouchableOpacity style={[styles.button, styles.doubleWidthButton]} onPress={() => numPress('0')}><Text style={[styles.text]}>0</Text></TouchableOpacity>
-                    <TouchableOpacity style={[styles.button]} onPress={() => numPress('.')}><Text style={[styles.text]}>.</Text></TouchableOpacity>
-                    <TouchableOpacity style={[styles.button]} onPress={() => calculatePress('=')}><Text style={[styles.text]}>=</Text></TouchableOpacity>
+                    <CalculatorButton title="0" onPress={() => numPress('0')} isDoubleWidthButton testID='0' />
+                    <CalculatorButton title="." onPress={() => numPress('.')} testID='dot' />
+                    <CalculatorButton title="=" onPress={() => calculatePress('=')} testID='=' />
                 </View>
             </View>
         </View>
     )
 }
-// <TouchableOpacity style={[styles.button]} onPress={() => toggleSumView('TV')}><Text style={[styles.text]}>View</Text></TouchableOpacity>
 
 const styles = StyleSheet.create({
     mainRow: {
