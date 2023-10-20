@@ -10,7 +10,7 @@ Ideas for app
 
 [*] Setup test coverage report
 
-[] Setup tests for calculator screen 
+[*] Setup tests for calculator screen 
 
 [] Work out logger - To let you log your work out and view your previous workouts 
 
